@@ -1,47 +1,33 @@
-package com.personal.weathercompose.ui.feature.location_weather
+package com.personal.weathercompose.ui.screen.dashboard
 
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.insets.systemBarsPadding
 import com.personal.weathercompose.R
-import com.personal.weathercompose.base.LAUNCH_LISTEN_FOR_EFFECTS
-import com.personal.weathercompose.ui.theme.BlueText
-import com.personal.weathercompose.ui.theme.WeatherComposeTheme
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+
 
 @Composable
-fun LocationWeatherScreen(
-    state: LocationWeatherContract.State,
-    effectFlow: Flow<LocationWeatherContract.Effect>?,
-    onEventSent: (event: LocationWeatherContract.Event) -> Unit,
-    onNavigationRequested: (navigationEffect: LocationWeatherContract.Effect.Navigation) -> Unit
+fun DashboardScreen(
+    viewModel: DashboardViewModel = hiltViewModel()
 ) {
-    val scaffoldState: ScaffoldState = rememberScaffoldState()
 
-    // Listen for side effects from the VM
-    LaunchedEffect(LAUNCH_LISTEN_FOR_EFFECTS) {
-        effectFlow?.onEach { effect ->
-            when (effect) {
-                is LocationWeatherContract.Effect.Navigation.ToCategoryDetails -> onNavigationRequested(
-                    effect
-                )
-            }
-        }?.collect()
-    }
+    val locationWithWeather by viewModel.locationWithWeather.collectAsState()
+
+    val scaffoldState: ScaffoldState = rememberScaffoldState()
     Box {
         Image(
             modifier = Modifier.fillMaxSize(),
@@ -64,7 +50,7 @@ fun LocationWeatherScreen(
                 ) {
                     Text(
                         modifier = Modifier.padding(start = 20.dp),
-                        text = state.locationWithWeather.name,
+                        text = locationWithWeather.name,
                         fontSize = 36.sp,
                         color = Color.White,
                         fontWeight = FontWeight.W500
@@ -72,7 +58,7 @@ fun LocationWeatherScreen(
                     Row {
                         Text(
                             modifier = Modifier.padding(start = 20.dp),
-                            text = state.locationWithWeather.main.temp.toString(),
+                            text = locationWithWeather.main.temp.toString(),
                             fontSize = 140.sp,
                             color = Color.White,
                             fontWeight = FontWeight.Normal
@@ -86,13 +72,13 @@ fun LocationWeatherScreen(
                     }
                     Text(
                         modifier = Modifier.padding(start = 20.dp),
-                        text = "Feels like : " + state.locationWithWeather.main.feelsLike + "°",
+                        text = "Feels like : " + locationWithWeather.main.feelsLike + "°",
                         fontSize = 36.sp,
                         color = Color.White,
                         fontWeight = FontWeight.W500
                     )
                 }
-                if (state.isLoading)
+                if (locationWithWeather.id == 0L)
                     LoadingBar()
             }
         }
@@ -108,13 +94,5 @@ fun LoadingBar() {
         modifier = Modifier.fillMaxSize()
     ) {
         CircularProgressIndicator()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    WeatherComposeTheme {
-        LocationWeatherScreen(LocationWeatherContract.State(), null, { }, { })
     }
 }
