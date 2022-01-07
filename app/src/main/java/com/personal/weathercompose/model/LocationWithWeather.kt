@@ -9,6 +9,8 @@ data class LocationWithWeather(
     var name: String = "empty",
     @SerializedName("main")
     var main: MainInfo = MainInfo(),
+    @SerializedName("weather")
+    var weather: List<Weather> = listOf(),
 )
 
 data class MainInfo(
@@ -24,4 +26,15 @@ data class MainInfo(
     var pressure: Long? = 0,
     @SerializedName("humidity")
     var humidity: Long? = 0,
+)
+
+data class Weather(
+    @SerializedName("id")
+    var id: Long = 0,
+    @SerializedName("main")
+    var main: String = "",
+    @SerializedName("description")
+    var description: String = "",
+    @SerializedName("icon")
+    var icon: String = ""
 )

@@ -11,10 +11,10 @@ class WeatherRepository @Inject constructor(private val weatherApi: WeatherApi) 
     private var cachedLocationWithWeather: LocationWithWeather? = null
 
 
-    suspend fun getLocationWithWeather(): LocationWithWeather {
+    suspend fun getLocationWithWeather(latitude: Double, longitude: Double): LocationWithWeather {
         var cachedLocationWithWeather = cachedLocationWithWeather
         if (cachedLocationWithWeather == null) {
-            cachedLocationWithWeather = weatherApi.LocationWithWeather()
+            cachedLocationWithWeather = weatherApi.LocationWithWeather(latitude,longitude)
             this.cachedLocationWithWeather = cachedLocationWithWeather
         }
         return cachedLocationWithWeather

@@ -10,7 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class WeatherApi @Inject constructor(private val service: Service) {
 
-    suspend fun LocationWithWeather(): LocationWithWeather = service.getLocationWithWeather(46.762608, 23.562157)
+    suspend fun LocationWithWeather(latitude: Double, longitude: Double): LocationWithWeather = service.getLocationWithWeather(latitude, longitude)
 
     interface Service {
 
